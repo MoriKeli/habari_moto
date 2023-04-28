@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 
 	// back to top button
-	const scrollTop = document.querySelector('.scroll-top');
+	const scrollTop = document.querySelector('.back-to-top');
 	if (scrollTop) {
 		const togglescrollTop = function() {
 			window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
