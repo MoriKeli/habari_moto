@@ -1,0 +1,14 @@
+# db file
+*sqlite3
+
+# virtual env.
+*venv
+
+# environment variables
+*env
+
+# binary files
+*__pycache__
+
+# migrations
+*migrations
