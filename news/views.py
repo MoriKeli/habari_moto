@@ -2,7 +2,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views import View
-from datetime import date
+from datetime import date, datetime
 import requests
 import environ
 
@@ -21,15 +21,22 @@ class HomepageView(View):
             BASE_URL = f'https://newsapi.org/v2/everything?q={category}&sortBy=relevancy&apiKey={API_KEY}'
 
             # sidebar nav news
-            # latest news articles
             current_date = date.today().strftime('%Y-%m-%d')
+
+            # this code is used to provide time period from first day of the month to the current day of the month.
+            # popular news need to be fetched from day one of the month, e.g. from 1st Apr to 28th Apr. or from 1st June to 30th June.
+            strip_time = datetime.strptime(current_date, '%Y-%m-%d')
+            first_day = (strip_time.day - strip_time.day) + 1     # get the first day of the month
+            first_date = date.today().strftime('%Y-%m-0') + str(first_day)
+
+            # latest news articles
             LATEST_NEWS_ARTICLES_URL = f'https://newsapi.org/v2/everything?q=category={category}&from={current_date}&to={current_date}&sortBy=publishedAt&apiKey={API_KEY}'
             response = requests.get(LATEST_NEWS_ARTICLES_URL)
             data = response.json()
             latest_articles = data["articles"][:17]      # get the first 5 recent news articles
 
             # popular news articles
-            POPULAR_NEWS_ARTICLES_URL = f'https://newsapi.org/v2/everything?q=category={category}&from={current_date}&to={current_date}&sortBy=popularity&apiKey={API_KEY}'
+            POPULAR_NEWS_ARTICLES_URL = f'https://newsapi.org/v2/everything?q=category={category}&from={first_date}&to={current_date}&sortBy=popularity&apiKey={API_KEY}'
             response = requests.get(POPULAR_NEWS_ARTICLES_URL)
             data = response.json()
             popular_articles = data["articles"][:17]      # get the first 5 popular news articles
@@ -45,6 +52,12 @@ class HomepageView(View):
 
             # sidebar nav news
             current_date = date.today().strftime('%Y-%m-%d')
+
+            # this code is used to provide time period from first day of the month to the current day of the month.
+            # popular news need to be fetched from day one of the month, e.g. from 1st Apr to 28th Apr. or from 1st June to 30th June.
+            strip_time = datetime.strptime(current_date, '%Y-%m-%d')
+            first_day = (strip_time.day - strip_time.day) + 1     # get the first day of the month
+            first_date = date.today().strftime('%Y-%m-0') + str(first_day)
             
             # latest news articles
             LATEST_NEWS_ARTICLES_URL = f'https://newsapi.org/v2/everything?q=from={current_date}&to={current_date}&sortBy=publishedAt&apiKey={API_KEY}'
@@ -53,7 +66,7 @@ class HomepageView(View):
             latest_articles = data["articles"][:15]      # get the first 5 recent news articles
 
             # popular news articles
-            POPULAR_NEWS_ARTICLES_URL = f'https://newsapi.org/v2/everything?q=from={current_date}&to={current_date}&sortBy=popularity&apiKey={API_KEY}'
+            POPULAR_NEWS_ARTICLES_URL = f'https://newsapi.org/v2/everything?q=from={first_date}&to={current_date}&sortBy=popularity&apiKey={API_KEY}'
             response = requests.get(POPULAR_NEWS_ARTICLES_URL)
             data = response.json()
             popular_articles = data["articles"][:15]      # get the first 5 popular news articles
