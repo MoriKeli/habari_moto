@@ -1,0 +1,120 @@
+	{% extends 'news/base.html' %}{% block title %}Get the latest news from around the world{% endblock %}
+	{% load static %}
+	{% block content %}
+	<main id="main">
+		<section>
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8" data-aos="fade-up">
+						<h3 class="category-title">Category: {% if category %}{{ category|title }}{% else %}LATEST NEWS{% endif %}</h3>
+						{% for articles in news_articles %}
+						<div class="d-md-flex post-entry-2 half">
+							<a href="{{ articles.url }}" class="me-4 thumbnail">
+								{% if articles.urlToImage is None %}
+									<img src="{% static 'img/news.png' %}" alt="img" class="img-fluid">
+								{% else %}
+									<img src="{{ articles.urlToImage }}" alt="img" class="img-fluid">
+								{% endif %}
+							</a>
+							<div>
+								<div class="post-meta"><span class="date">{{ articles.source.name }}</span> <span class="mx-1">&bullet;</span> <span>{{ articles.publishedAt|slice:":10" }}</span></div>
+								<h3><a href="{{ articles.url }}">{{ articles.title }}</a></h3>
+								<p>{{ articles.description }}</p>
+								<div class="d-flex align-items-center author">
+									<div class="photo"><img src="{% static 'img/default.png' %}" alt="" class="img-fluid"></div>
+									<div class="name">
+										<h3 class="m-0 p-0">{{ articles.author|default:"Unknown" }}</h3>
+									</div>
+								</div>
+							</div>
+						</div>
+						{% endfor %}
+
+						<div class="text-start py-4">
+							<nav aria-label="Pages" class="custom">
+								<ul class="pagination pagination-sm justify-content-center">
+									{% if page.has_previous %}
+										<li class="page-item"><a href="?page=1" class="page-link">First</a></li>
+										<li class="page-item"><a href="?page={{ page.previous_page_number }}" class="page-link">&laquo;</a></li>
+									{% endif %}
+									{% for num in page.paginator.page_range %}
+										{% if page.number == num %}
+											<li class="page-item active" aria-current="page"><a class="page-link" href="?page={{num}}">{{num}} of {{ page.paginator.num_pages }}</a></li>
+										{% elif num > page.number|add:"-2" and num < page.number|add:"2" %}
+											<li class="page-item"><a class="page-link" href="?page={{num}}">{{num}}</a></li>
+										{% endif %}
+									{% endfor %}
+									{% if page.has_next %}
+										<li class="page-item"><a href="?page={{ page.next_page_number }}" class="page-link">&raquo;</a></li>
+										<li class="page-item"><a href="?page={{ page.paginator.num_pages }}" class="page-link">Last</a></li>
+									{% endif %}
+								</ul>
+							</nav>
+						</div>
+					</div>
+
+					<div class="col-md-4">
+						<div class="aside-block">
+							<ul class="nav nav-pills custom-tab-nav mb-4" id="pills-tab" role="tablist">
+								<li class="nav-item" role="presentation">
+									<button class="nav-link active" id="pills-latest-tab" data-bs-toggle="pill" data-bs-target="#pills-latest" type="button" role="tab" aria-controls="pills-latest" aria-selected="false">Latest</button>
+								</li>
+								<li class="nav-item" role="presentation">
+									<button class="nav-link" id="pills-popular-tab" data-bs-toggle="pill" data-bs-target="#pills-popular" type="button" role="tab" aria-controls="pills-popular" aria-selected="true">Popular</button>
+								</li>
+								<li class="nav-item" role="presentation">
+									<button class="nav-link" id="pills-trending-tab" data-bs-toggle="pill" data-bs-target="#pills-trending" type="button" role="tab" aria-controls="pills-trending" aria-selected="false">Trending</button>
+								</li>
+
+							</ul>
+
+							<div class="tab-content" id="pills-tabContent">
+								<div class="tab-pane fade show active" id="pills-latest" role="tabpanel" aria-labelledby="pills-latest-tab">
+									{% for articles in latest_news %}
+									<div class="post-entry-1 border-bottom">
+										<div class="post-meta"><span class="date">{{ articles.source.name }}</span> <span class="mx-1">&bullet;</span> <span>{{ articles.publishedAt|slice:":10" }}</span></div>
+										<h2 class="mb-2"><a href="{{ articles.url }}">{{ articles.title }}</a></h2>
+										<span class="author mb-3 d-block">{{ articles.author|default:"Unknown" }}</span>
+									</div>
+									{% endfor %}
+								</div> 
+
+								<div class="tab-pane fade" id="pills-popular" role="tabpanel" aria-labelledby="pills-popular-tab">
+									{% for articles in popular_articles %}
+									<div class="post-entry-1 border-bottom">
+										<div class="post-meta"><span class="date">{{ articles.source.name }}</span> <span class="mx-1">&bullet;</span> <span>{{ articles.publishedAt|slice:":10" }}</span></div>
+										<h2 class="mb-2"><a href="{{ articles.url }}">{{ articles.title }}</a></h2>
+										<span class="author mb-3 d-block">{{ articles.author|default:"Unknown" }}</span>
+									</div>
+									{% endfor %}
+								</div>
+
+								<div class="tab-pane fade" id="pills-trending" role="tabpanel" aria-labelledby="pills-trending-tab">
+									{% for articles in trending_news %}
+									<div class="post-entry-1 border-bottom">
+										<div class="post-meta"><span class="date">{{ articles.source.name }}</span> <span class="mx-1">&bullet;</span> <span>{{ articles.publishedAt|slice:":10" }}</span></div>
+										<h2 class="mb-2"><a href="{{ articles.url }}">{{ articles.title }}</a></h2>
+										<span class="author mb-3 d-block">{{ articles.author|default:"Unknown" }}</span>
+									</div>
+									{% endfor %}
+								</div>
+							</div>
+						</div>
+
+						<div class="aside-block">
+							<h3 class="aside-title">Categories</h3>
+							<ul class="aside-links list-unstyled">
+								<li><a href="{% url 'homepage' %}" class="text-primary"><i class="bi bi-chevron-right"></i> All</a></li>
+								<li><a href="{% url 'homepage' %}?category=business"><i class="bi bi-chevron-right"></i> Business</a></li>
+								<li><a href="{% url 'homepage' %}?category=entertainment"><i class="bi bi-chevron-right"></i> Entertainment</a></li>
+								<li><a href="{% url 'homepage' %}?category=health"><i class="bi bi-chevron-right"></i> Health</a></li>
+								<li><a href="{% url 'homepage' %}?category=sports"><i class="bi bi-chevron-right"></i> Sports</a></li>
+								<li><a href="{% url 'homepage' %}?category=technology"><i class="bi bi-chevron-right"></i> Technology</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+	{% endblock %}
