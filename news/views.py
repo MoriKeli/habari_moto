@@ -18,10 +18,51 @@ class HomepageView(View):
         category = request.GET.get('category')
         
         if category:
-            BASE_URL = f'https://newsapi.org/v2/everything?q=category={category}&apiKey={API_KEY}'
-        
+            BASE_URL = f'https://newsapi.org/v2/everything?q={category}&sortBy=relevancy&apiKey={API_KEY}'
+
+            # sidebar nav news
+            # latest news articles
+            current_date = date.today().strftime('%Y-%m-%d')
+            LATEST_NEWS_ARTICLES_URL = f'https://newsapi.org/v2/everything?q=category={category}&from={current_date}&to={current_date}&sortBy=publishedAt&apiKey={API_KEY}'
+            response = requests.get(LATEST_NEWS_ARTICLES_URL)
+            data = response.json()
+            latest_articles = data["articles"][:17]      # get the first 5 recent news articles
+
+            # popular news articles
+            POPULAR_NEWS_ARTICLES_URL = f'https://newsapi.org/v2/everything?q=category={category}&from={current_date}&to={current_date}&sortBy=popularity&apiKey={API_KEY}'
+            response = requests.get(POPULAR_NEWS_ARTICLES_URL)
+            data = response.json()
+            popular_articles = data["articles"][:17]      # get the first 5 popular news articles
+
+            # trending news articles
+            TRENDING_NEWS_ARTICLES_URL = f'https://newsapi.org/v2/everything?q=category={category}&from={current_date}&sortBy=relevancy&apiKey={API_KEY}'
+            response = requests.get(TRENDING_NEWS_ARTICLES_URL)
+            data = response.json()
+            trending_articles = data["articles"][:20]      # get the first 5 trending news articles
+
         else:
-            BASE_URL = f'https://newsapi.org/v2/everything?q=country&apiKey={API_KEY}'
+            BASE_URL = f'https://newsapi.org/v2/everything?q=country&sortBy=publishedAt&apiKey={API_KEY}'
+
+            # sidebar nav news
+            current_date = date.today().strftime('%Y-%m-%d')
+            
+            # latest news articles
+            LATEST_NEWS_ARTICLES_URL = f'https://newsapi.org/v2/everything?q=from={current_date}&to={current_date}&sortBy=publishedAt&apiKey={API_KEY}'
+            response = requests.get(LATEST_NEWS_ARTICLES_URL)
+            data = response.json()
+            latest_articles = data["articles"][:15]      # get the first 5 recent news articles
+
+            # popular news articles
+            POPULAR_NEWS_ARTICLES_URL = f'https://newsapi.org/v2/everything?q=from={current_date}&to={current_date}&sortBy=popularity&apiKey={API_KEY}'
+            response = requests.get(POPULAR_NEWS_ARTICLES_URL)
+            data = response.json()
+            popular_articles = data["articles"][:15]      # get the first 5 popular news articles
+
+            # trending news articles
+            TRENDING_NEWS_ARTICLES_URL = f'https://newsapi.org/v2/everything?q=from={current_date}&sortBy=relevancy&apiKey={API_KEY}'
+            response = requests.get(TRENDING_NEWS_ARTICLES_URL)
+            data = response.json()
+            trending_articles = data["articles"][:15]      # get the first 5 trending news articles
 
         response = requests.get(BASE_URL)
         data = response.json()
@@ -43,14 +84,12 @@ class HomepageView(View):
         RECENT_ARTICLES_URL = f'https://newsapi.org/v2/everything?q=from={current_date}&apiKey={API_KEY}'
         response = requests.get(RECENT_ARTICLES_URL)
         data = response.json()
-
-        print(f'Recent: {data}')
         recent_articles = data["articles"][:5]      # get the first 5 recent news articles
 
-
-        
         context = {
             'news_articles': page_obj, 'page': page_obj,
             'category': category, 'recent_articles': recent_articles,
+            'latest_news': latest_articles, 'popular_articles': popular_articles,
+            'trending_news': trending_articles,
         }
         return render(request, 'news/index.html', context)
