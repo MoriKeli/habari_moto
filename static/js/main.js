@@ -55,15 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		})
 	});
-
-	// Preloader
-	let preloader = select('#preloader');
-	if (preloader) {
-		window.addEventListener('load', () => {
-		preloader.remove()
-		});
-	}
-
+	
 	// back to top button
 	const scrollTop = document.querySelector('.back-to-top');
 	if (scrollTop) {
