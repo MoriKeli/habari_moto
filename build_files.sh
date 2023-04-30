@@ -5,6 +5,6 @@ echo "INSTALLING PACKAGES ..."
 python3.9 -m pip install -r requirements.txt
 
 echo "COLLECTING STATIC FILES ..."
-python3.9 manage.py collectstatic --noinput --clear
+python3.9 manage.py collectstatic
 
 echo "BUILD END"
